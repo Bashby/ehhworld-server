@@ -1,0 +1,28 @@
+syntax = "proto3";
+package protobuf;
+
+message Message {
+  // Message payload
+  oneof payload {
+    Move move = 10;
+    Attack attack = 11;
+    Build build = 12;
+    Sleep sleep = 13;
+  }
+}
+
+message Move {
+  string direction = 1;
+}
+
+message Attack {
+  string target = 1;
+}
+
+message Build {
+  string type = 1;
+}
+
+message Sleep {
+  string duration = 1;
+}

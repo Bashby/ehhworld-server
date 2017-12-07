@@ -1,0 +1,26 @@
+version: "3"
+
+networks:
+  ehh-world-network:
+    driver: bridge
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: ./Dockerfile
+    networks:
+      - ehh-world-network
+    # command: yarr
+    # volumes:
+    #  - .:/go/src/app
+    # ports:
+    #   - "8080:80"
+
+  database:
+      image: postgres
+      restart: always
+      networks:
+        - ehh-world-network
+      environment:
+        POSTGRES_PASSWORD: testpassword
