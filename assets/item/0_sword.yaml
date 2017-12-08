@@ -1,0 +1,11 @@
+	id: 0
+	name: sword
+	description: A basic one handed sword.
+	stackable: false
+	tags:
+		- basic
+		- weapon
+		- onehanded
+		- melee
+	rarity: 1 # common
+	durability: 1.0

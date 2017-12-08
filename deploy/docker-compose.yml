@@ -12,8 +12,9 @@ services:
     networks:
       - ehh-world-network
     # command: yarr
-    # volumes:
-    #  - .:/go/src/app
+    volumes:
+      - C:\Users\sye\.ssh\id_rsa:/root/.ssh/id_rsa
+      #- .:/go/src/app
     # ports:
     #   - "8080:80"
 

@@ -27,3 +27,13 @@
 #!.vscode/launch.json
 #!.vscode/extensions.json
 .history
+
+#####################
+# Custom Exclusions #
+#####################
+bin/
+output/
+debug/
+
+*.png
+!/asset/img/*.png
