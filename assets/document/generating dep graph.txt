@@ -1,0 +1,1 @@
+godepgraph -s -p bitbucket.org/ehhio/ehhworldserver/server/vendor bitbucket.org/ehhio/ehhworldserver/server | C:\dev\graphviz-2.38\release\bin\dot.exe -Tpng -o c:\dev\godepgraph.png

@@ -143,7 +143,7 @@ func (m *GameMap) Generate(mode GenerationMode, seed int64) {
 	m.seed = seed
 
 	// Init biome data
-	biomeImg := prepareBiomeData(*m.size, "./asset/img/biomes.v5.png")
+	biomeImg := prepareBiomeData(*m.size, "../assets/image/biomes.v5.png")
 
 	// Init noise data
 	elevationNoise, moistureNoise, elevationImg, moistureImg := prepareNoiseData(*m.size)
@@ -201,6 +201,7 @@ func (m *GameMap) populateBlocksFromImage(image *image.RGBA) {
 	}
 }
 
+// ToImage outputs game map data to a png image
 func (m *GameMap) ToImage() {
 	// Create an output target
 	img := image.NewRGBA(image.Rect(0, 0, m.size.Width, m.size.Height))
@@ -213,7 +214,7 @@ func (m *GameMap) ToImage() {
 	}
 
 	// Save image
-	draw2dimg.SaveToPngFile("../output/img/out_world.png", img)
+	draw2dimg.SaveToPngFile("../assets/image/generated/out_world.png", img)
 }
 
 func (m *GameMap) mapToBlockCoordinates(mapPos utility.Position) utility.Position {
@@ -351,7 +352,7 @@ func voronoiWorldGeneration(size utility.Size, elevationNoise, moistureNoise [][
 
 		// Color cell using centroid in biome
 		center := utils.CellCentroid(cell)
-		sampling := biomeSampledColorData[roundToInt(center.X)][roundToInt(center.Y)] // TODO: THIS CAN GO OUT OF BOUND FOR SOME REASON...
+		sampling := biomeSampledColorData[utility.Clamp(roundToInt(center.X), 0, size.Width)][utility.Clamp(roundToInt(center.Y), 0, size.Height)] // TODO: Fixed? ... THIS CAN GO OUT OF BOUND FOR SOME REASON...
 		cellColor := sampling.color
 		draw.SetFillColor(cellColor)
 		draw.SetStrokeColor(cellColor)
@@ -374,9 +375,10 @@ func voronoiWorldGeneration(size utility.Size, elevationNoise, moistureNoise [][
 
 func prepareBiomeData(targetSize utility.Size, biomeDataPath string) (biomeImgScaled *image.RGBA) {
 	// Load Biome data
+	//absPath, _ := filepath.Abs(biomeDataPath)
 	biomeImg, err := draw2dimg.LoadFromPngFile(biomeDataPath)
 	if err != nil {
-		log.Fatalf("Failed to load biome data from file %v.", biomeDataPath)
+		log.Fatalf("Failed to load biome data from file %v. Saw %v", biomeDataPath, err)
 	}
 
 	// Transform biome mapping to target size of the world and noise data
@@ -413,7 +415,7 @@ func prepareOutputImage(size utility.Size, world, biomes, elevation, moisture *i
 
 	// Draw text labels
 	draw := draw2dimg.NewGraphicContext(img)
-	draw2d.SetFontFolder("./fonts")
+	draw2d.SetFontFolder("../assets/font")
 	draw2d.SetFontNamer(fontNamer)
 	draw.SetLineWidth(4)
 	draw.SetFontData(draw2d.FontData{Name: "Rubik"})
@@ -430,7 +432,10 @@ func prepareOutputImage(size utility.Size, world, biomes, elevation, moisture *i
 	draw.FillStringAt("Biome Mapping", 10+float64(size.Width), float64(size.Height)-10)
 
 	// Save image
-	draw2dimg.SaveToPngFile("./output/img/out.png", img)
+	err := draw2dimg.SaveToPngFile("../assets/image/generated/out.png", img)
+	if err != nil {
+		log.Fatalf("Failed to save generate world map. Saw %v", err)
+	}
 }
 
 func prepareNoiseData(targetSize utility.Size) (elevationNoise, moistureNoise [][]float64, elevationImg, moistureImg *image.RGBA) {
