@@ -1,27 +1,30 @@
 version: "3"
 
 networks:
-  ehh-world-network:
-    driver: bridge
+  default:
+    external:
+      name: ehh-world-dev-network
 
 services:
-  server:
+  ehhioserver:
+    container_name: ehhioserver
     build:
       context: ..
       dockerfile: ./Dockerfile
-    networks:
-      - ehh-world-network
-    # command: yarr
+    ports:
+      - "8080:8080"
     volumes:
-      - C:\Users\sye\.ssh\id_rsa:/root/.ssh/id_rsa
+      - ~\.ssh\id_rsa:/root/.ssh/id_rsa
       #- .:/go/src/app
-    # ports:
-    #   - "8080:80"
 
   database:
-      image: postgres
+      image: postgres:latest
+      container_name: postgres
       restart: always
-      networks:
-        - ehh-world-network
+      ports:
+        - 5432:5432
       environment:
-        POSTGRES_PASSWORD: testpassword
+        POSTGRES_PASSWORD: ehhworlddb
+      volumes:
+        - ../server/db/sql/init/:/docker-entrypoint-initdb.d/
+
