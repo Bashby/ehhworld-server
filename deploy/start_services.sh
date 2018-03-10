@@ -8,7 +8,7 @@ RESET='\033[0m' # No Color
 PRIVATE_KEY=${REPO_PRIVATE_KEY:-}
 
 # Check that we have a private key for pulling our repo
-[ -z ${PRIVATE_KEY} ] && { printf "${REDBG_WHITEFG}SSH Private Key Missing!\nYou MUST set REPO_PRIVATE_KEY to a working SSL private key to pull from the EhhWorld Server bitbucket git repository!${RESET}"; exit 1; }
+[ -z "${PRIVATE_KEY}" ] && { printf "${REDBG_WHITEFG}SSH Private Key Missing!\nYou MUST set REPO_PRIVATE_KEY to a working SSL private key to pull from the EhhWorld Server bitbucket git repository!${RESET}"; exit 1; }
 
 # Create our network, if not already exists
 printf "${GREEN}Checking for docker network 'ehh-world-dev-network' ...${RESET}\n"
