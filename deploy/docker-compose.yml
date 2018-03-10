@@ -6,20 +6,23 @@ networks:
       name: ehh-world-dev-network
 
 services:
-  ehhioserver:
-    container_name: ehhioserver
+  ehhio_server:
+    container_name: ehhio_server
     build:
       context: ..
       dockerfile: ./Dockerfile
+      args:
+        repo_private_key: ${REPO_PRIVATE_KEY}
     ports:
       - "8080:8080"
-    volumes:
-      - ~\.ssh\id_rsa:/root/.ssh/id_rsa
+    depends_on:
+      - postgres
+    #volumes:
+      #- ~/.ssh/id_rsa:/root/.ssh/id_rsa
       #- .:/go/src/app
 
-  database:
+  postgres:
       image: postgres:latest
-      container_name: postgres
       restart: always
       ports:
         - 5432:5432
@@ -28,3 +31,10 @@ services:
       volumes:
         - ../server/db/sql/init/:/docker-entrypoint-initdb.d/
 
+  start_dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - postgres
+    environment:
+      SLEEP_LENGTH: 2.0
+    command: postgres:5432

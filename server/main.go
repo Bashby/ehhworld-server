@@ -33,11 +33,11 @@ func init() {
 	flag.StringVar(&level, "level", "info", "the log level to output during execution. (e.g. 'panic', 'fatal', 'error', 'warn', 'info', or 'debug'")
 	flag.IntVar(&width, "width", 512, "width of the game world")
 	flag.IntVar(&height, "height", 512, "height of the game world")
-	flag.IntVar(&mode, "mode", 0, "The map generator mode to use. Either 0 = 'noise' or 1 = 'voronoi'")
-	flag.Int64Var(&seed, "seed", time.Now().UTC().UnixNano(), "World generation seed")
+	flag.IntVar(&mode, "mode", 0, "The map generator mode to use. 0 = 'noise', 1 = 'voronoi'. (default: 0)")
+	flag.Int64Var(&seed, "seed", time.Now().UTC().UnixNano(), "World generation seed, defaults to random seed.")
 	flag.IntVar(&mapBlockSize, "mapBlockSize", 4, "The size of blocks to break the game map into for transport.")
 	flag.StringVar(&address, "address", ":8080", "The webserver address to listen on.")
-	flag.BoolVar(&serveGame, "serve", false, "If true, will start a game loop and run a webserver to serve the game world.")
+	flag.BoolVar(&serveGame, "serve", false, "Start a game loop and run a webserver to serve the game world.")
 	flag.IntVar(&tick, "tickrate", 60, "Times per second the game ticks and then updates players.")
 }
 

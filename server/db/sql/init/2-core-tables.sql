@@ -3,7 +3,7 @@
 
 
 -- user
-CREATE TABLE user (
+CREATE TABLE player_account (
 	-- base columns
 	id SERIAL PRIMARY KEY,
 	uuid UUID NOT NULL DEFAULT uuid_generate_v4(),
