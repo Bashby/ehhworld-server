@@ -17,9 +17,6 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
-    #volumes:
-      #- ~/.ssh/id_rsa:/root/.ssh/id_rsa
-      #- .:/go/src/app
 
   postgres:
       image: postgres:latest
