@@ -35,7 +35,7 @@ From the root of the project:
 
 ## Interacting with the server
 
-In your browser, navigate to `localhost:8080`.
+In your browser, navigate to `localhost:8081`.
 
 ## Notes
 

@@ -36,7 +36,7 @@ func init() {
 	flag.IntVar(&mode, "mode", 0, "The map generator mode to use. 0 = 'noise', 1 = 'voronoi'. (default: 0)")
 	flag.Int64Var(&seed, "seed", time.Now().UTC().UnixNano(), "World generation seed, defaults to random seed.")
 	flag.IntVar(&mapBlockSize, "mapBlockSize", 4, "The size of blocks to break the game map into for transport.")
-	flag.StringVar(&address, "address", ":8080", "The webserver address to listen on.")
+	flag.StringVar(&address, "address", ":8081", "The webserver address to listen on.")
 	flag.BoolVar(&serveGame, "serve", false, "Start a game loop and run a webserver to serve the game world.")
 	flag.IntVar(&tick, "tickrate", 60, "Times per second the game ticks and then updates players.")
 }

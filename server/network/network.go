@@ -35,6 +35,7 @@ const (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     CheckOrigin,
 }
 
 // // Network is a top-level networking object containing a websocket communication hub
@@ -50,6 +51,11 @@ var upgrader = websocket.Upgrader{
 // 		hub:     NewHub(),
 // 	}
 // }
+
+// CheckOrigin validates incoming websocket connection origins
+func CheckOrigin(r *http.Request) bool {
+	return r.Header.Get("Origin") == "http://localhost:8080"
+}
 
 // Serve starts running a hub to handle clients via websocket connections
 func Serve(address string, game *game.Game) *Hub {

@@ -21,7 +21,7 @@ fi
 
 # Clean-up existing containers
 printf "${GREEN}Cleaning up currently running services ...${RESET}\n"
-docker-compose down --remove-orphans
+docker-compose down
 
 # Build our services
 printf "${GREEN}Building services ...${RESET}\n"

@@ -16,6 +16,9 @@ RUN mkdir /root/.ssh && echo "StrictHostKeyChecking no " > /root/.ssh/config
 # Bundle private key to access repos
 RUN echo "$repo_private_key" > /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
 
+# Pull in dependency checker
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+
 # Bundle source
 COPY . /go/src/app
 
@@ -24,7 +27,7 @@ WORKDIR /go/src/app/server/
 RUN go-wrapper download && go-wrapper install
 
 # Check dependencies
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && dep ensure -vendor-only
+RUN dep ensure -vendor-only
 
 # Start
 CMD ["go-wrapper", "run", "--mode", "1", "--serve"]
