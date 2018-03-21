@@ -1,12 +1,13 @@
 package main
 
 import (
-	"flag"
 	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/namsral/flag"
 
 	colorable "github.com/mattn/go-colorable"
 	log "github.com/sirupsen/logrus"

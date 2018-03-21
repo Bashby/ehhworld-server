@@ -93,7 +93,7 @@ func (h *Hub) Stop() {
 func (h *Hub) handleClientConnect(client *Client) {
 	log.WithFields(log.Fields{
 		"client address": client.conn.RemoteAddr().String(),
-	}).Info("New Client Connected")
+	}).Info("New Client Connectedddd")
 
 	player := player.NewPlayer(utility.GeneratePlayerName(), h.game.GetGameMap().RandomPositionHighResolution(), h.game.GetGameMap().GetBlocksSize())
 	h.game.AddObject(player)
@@ -113,6 +113,9 @@ func (h *Hub) handleClientDisconnect(client *Client) {
 }
 
 func (h *Hub) handleInboundMessage(msg *ClientMessage) {
+	log.WithFields(log.Fields{
+		"msg": msg,
+	}).Info("Spawning Process Message")
 	go processMessage(msg)
 }
 
@@ -158,6 +161,10 @@ func packMessage(msg []byte) []byte {
 }
 
 func processMessage(message *ClientMessage) {
+	log.WithFields(log.Fields{
+		"message": message,
+	}).Info("Process Message")
+
 	// Decode message
 	wrapper := &protobuf.Message{}
 	err := proto.Unmarshal(message.message, wrapper)
@@ -168,18 +175,24 @@ func processMessage(message *ClientMessage) {
 	// Process payload
 	switch msg := wrapper.Payload.(type) {
 	case *protobuf.Message_Move:
-		handleMove(msg, message.client.hub)
+		handleMove(msg, message.client)
 	case *protobuf.Message_Attack:
-		handleAttack(msg, message.client.hub)
+		handleAttack(msg, message.client)
 	}
 }
 
-func handleMove(msg *protobuf.Message_Move, hub *Hub) {
-	log.Println("Twas a Move message: ", msg.Move.Direction)
+func handleMove(msg *protobuf.Message_Move, c *Client) {
+	log.WithFields(log.Fields{
+		"client address": c.conn.RemoteAddr().String(),
+		"direction":      msg.Move.Direction,
+	}).Info("Client Moved")
 }
 
-func handleAttack(msg *protobuf.Message_Attack, hub *Hub) {
-	log.Println("Twas a Attack message: ", msg.Attack.Target)
+func handleAttack(msg *protobuf.Message_Attack, c *Client) {
+	log.WithFields(log.Fields{
+		"client address": c.conn.RemoteAddr().String(),
+		"direction":      msg.Attack.Target,
+	}).Info("Client Attacked")
 }
 
 // test := &websocket.Message{

@@ -74,19 +74,38 @@ func (c *Client) outboundHandler() {
 
 				return
 			}
-			w.Write(message)
 
-			// Add queued messages to the current websocket message
-			n := len(c.outbound)
-			for i := 0; i < n; i++ {
-				w.Write(<-c.outbound)
+			// Write message out to client
+			_, err = w.Write(message)
+			if err != nil {
+				log.WithFields(log.Fields{
+					"client": c.conn.RemoteAddr().String(),
+					"error":  err,
+				}).Info("Client outbound handler; Write error")
+
+				return
 			}
 
+			// Add queued messages to the current websocket message
+			queued := len(c.outbound)
+			for i := 0; i < queued; i++ {
+				_, err := w.Write(<-c.outbound)
+				if err != nil {
+					log.WithFields(log.Fields{
+						"client": c.conn.RemoteAddr().String(),
+						"error":  err,
+					}).Info("Client outbound handler; Write queued message error")
+
+					return
+				}
+			}
+
+			// Flush write buffer to network layer
 			if err := w.Close(); err != nil {
 				log.WithFields(log.Fields{
 					"client": c.conn.RemoteAddr().String(),
 					"error":  err,
-				}).Info("Client outbound handler; Writer close error")
+				}).Info("Client outbound handler; Writer flush/close error")
 
 				return
 			}
@@ -115,6 +134,10 @@ func (c *Client) inboundHandler() {
 		c.conn.Close()
 	}()
 
+	log.WithFields(log.Fields{
+		"client": c.conn.RemoteAddr().String(),
+	}).Info("Client Inbound Handler Started.")
+
 	c.conn.SetReadLimit(maxMessageSize)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
@@ -130,14 +153,34 @@ func (c *Client) inboundHandler() {
 			break
 		}
 
+		log.WithFields(log.Fields{
+			"client":  c.conn.RemoteAddr().String(),
+			"type":    messageType,
+			"message": message,
+		}).Info("Client Sent Message.")
+
 		// Only support binary messages
 		if messageType != websocket.BinaryMessage {
 			continue
 		}
 
+		log.WithFields(log.Fields{
+			"client":  c.conn.RemoteAddr().String(),
+			"type":    messageType,
+			"message": message,
+		}).Info("Client Sent Message 2.")
+
 		// Handle blank or too short messages
 		offset := 0
 		totalMessageLength := len(message)
+
+		log.WithFields(log.Fields{
+			"client":  c.conn.RemoteAddr().String(),
+			"type":    messageType,
+			"message": message,
+			"length":  totalMessageLength,
+		}).Info("Client Sent Message 3.")
+
 		if totalMessageLength == 0 || totalMessageLength <= offset+packedMessageHeaderSize {
 			continue
 		}
@@ -152,13 +195,29 @@ func (c *Client) inboundHandler() {
 			// Determine location
 			msglen := int(binary.BigEndian.Uint16(message[offset : offset+packedMessageHeaderSize]))
 
+			log.WithFields(log.Fields{
+				"client":                  c.conn.RemoteAddr().String(),
+				"type":                    messageType,
+				"message":                 message,
+				"msglen":                  msglen,
+				"offset":                  offset,
+				"packedMessageHeaderSize": packedMessageHeaderSize,
+				"data":    message[offset : offset+packedMessageHeaderSize],
+				"parsed":  binary.BigEndian.Uint16(message[offset : offset+packedMessageHeaderSize]),
+				"parsed2": binary.LittleEndian.Uint16(message[offset : offset+packedMessageHeaderSize]),
+			}).Info("Client Sent Message 4.")
+
 			// Payload read bounds check
-			if offset+packedMessageHeaderSize+msglen >= totalMessageLength {
+			if msglen == 0 || offset+packedMessageHeaderSize+msglen > totalMessageLength {
 				break
 			}
 
 			// Extract
 			payload := message[offset+packedMessageHeaderSize : offset+packedMessageHeaderSize+msglen]
+
+			log.WithFields(log.Fields{
+				"payload": payload,
+			}).Info("Client Sent Message 5. piping!")
 
 			// Pipe
 			c.hub.inbound <- &ClientMessage{message: payload, client: c}

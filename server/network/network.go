@@ -107,8 +107,18 @@ func handleWebsocketRequest(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
 	client := NewClient(hub, conn)
+
+	log.WithFields(log.Fields{
+		"client": client.conn.RemoteAddr().String(),
+	}).Info("Pre Client Creation Emit")
+
 	client.hub.register <- client
+
+	log.WithFields(log.Fields{
+		"client": client.conn.RemoteAddr().String(),
+	}).Info("Starting Handlers!")
 
 	// Start client message handler routines
 	go client.outboundHandler()

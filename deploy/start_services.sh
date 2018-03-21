@@ -5,6 +5,11 @@ set -Eeuo pipefail
 GREEN='\033[0;32m'
 REDBG_WHITEFG='\033[41m'
 RESET='\033[0m' # No Color
+
+# Set some configuration
+COMPOSE_IGNORE_ORPHANS="true"
+
+# Bring in build args
 PRIVATE_KEY=${REPO_PRIVATE_KEY:-}
 
 # Check that we have a private key for pulling our repo

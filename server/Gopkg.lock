@@ -50,6 +50,12 @@
   revision = "02bc531a06742eb80b11aa1da113c587b0168aea"
 
 [[projects]]
+  name = "github.com/namsral/flag"
+  packages = ["."]
+  revision = "71ceffbeb0ba60fccc853971bb3ed4d7d90bfd04"
+  version = "v1.7.4-pre"
+
+[[projects]]
   branch = "master"
   name = "github.com/pzsz/voronoi"
   packages = [".","utils"]
@@ -88,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "373cab1568723c05cb549664a4ed5840746a54f7f29249baa6de78296879048b"
+  inputs-digest = "3c97544d5078c4ee3e7259feca9027245d53b6ad9bf2b1bb2092e673b910fe9f"
   solver-name = "gps-cdcl"
   solver-version = 1
