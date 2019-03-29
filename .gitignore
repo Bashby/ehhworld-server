@@ -37,4 +37,4 @@ dist/
 debug/
 
 *.png
-!/asset/img/*.png
+!/assets/image/*.png
